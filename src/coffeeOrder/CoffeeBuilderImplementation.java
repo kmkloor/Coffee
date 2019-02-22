@@ -21,6 +21,9 @@ public class CoffeeBuilderImplementation implements CoffeeBuilder {
 	 */
 	@Override
 	public Coffee build() {
+		if(coffee.getEspresso() <= 0){
+	        throw new IllegalArgumentException("Your drink is 0% espresso. Try again with less milk/cream/water/foam.");    
+	    }
 		return coffee;
 	}
 
@@ -39,7 +42,7 @@ public class CoffeeBuilderImplementation implements CoffeeBuilder {
 	 * @see coffeeBuilder.CoffeeBuilder#setCream(int)
 	 */
 	@Override
-	public CoffeeBuilder setCream(int cream) {
+	public CoffeeBuilder setCream(boolean cream) {
 		coffee.setCream(cream);
 		return this;
 	}
@@ -83,5 +86,6 @@ public class CoffeeBuilderImplementation implements CoffeeBuilder {
 		coffee.setFlavor(flavor);
 		return this;
 	}
+	
 
 }

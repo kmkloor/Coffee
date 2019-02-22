@@ -26,7 +26,7 @@ public interface CoffeeBuilder {
 	 * @param cream the percentage cream
 	 * @return the coffee builder
 	 */
-	CoffeeBuilder setCream(int cream); 
+	CoffeeBuilder setCream(boolean cream); 
 	
 	/**
 	 * Sets the water.

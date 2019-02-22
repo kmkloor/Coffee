@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,17 +16,21 @@ import coffeeOrder.Coffee;
 import coffeeOrder.CoffeeBuilder;
 import coffeeOrder.CoffeeBuilderImplementation;
 import coffeeOrder.CoffeeBuilderManager;
-import org.junit.jupiter.api.Disabled;
+
 
 /**
  * @author kkloor
  *
  */
-public class CoffeeBuilderTest {
+public class CoffeeBuilderManagerTest {
+	/** The test manager. */
 	private static CoffeeBuilderManager testManager;
+	
+	/** The coffee. */
 	private Coffee coffee;
+	
 	/**
-	 * @throws java.lang.Exception
+	 * Sets the up before class.
 	 */
 	@BeforeAll
 	static void setUpBeforeClass(){
@@ -35,14 +40,18 @@ public class CoffeeBuilderTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
+	 * Tear down after class.
+	 *
+	 * @throws Exception the exception
 	 */
 	@AfterAll
 	static void tearDownAfterClass() throws Exception {
 	}
 
 	/**
-	 * @throws java.lang.Exception
+	 * Sets the up.
+	 *
+	 * @throws Exception the exception
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
@@ -50,40 +59,60 @@ public class CoffeeBuilderTest {
 	}
 
 	/**
-	 * @throws java.lang.Exception
+	 * Tear down.
+	 *
+	 * @throws Exception the exception
 	 */
 	@AfterEach
 	void tearDown() throws Exception{
 		coffee = null;
 	}
 
+	/**
+	 * Test empty order.
+	 */
 	@Test
 	void testEmptyOrder() {
-		coffee = testManager.construct(0, 0, 0, 0, false, "");
+		coffee = testManager.construct(0, false, 0, 0, false, "");
 		System.out.println(coffee);
+		assertEquals( 100, coffee.getEspresso(),"Only Espresso");
 		assertEquals( 0, coffee.getMilk(),"No Milk");
-		assertEquals( 0, coffee.getCream(),"No Cream");
+		assertFalse(coffee.getCream(),"No Cream");
 		assertEquals( 0, coffee.getWater(),"No Water");
 		assertEquals( 0, coffee.getFoam(),"No Foam");
-		assertFalse(coffee.isSugar(),"No Sugar");
+		assertFalse(coffee.hasSugar(),"No Sugar");
 		assertTrue(coffee.getFlavor().equals(""), "No flavor"); 
-		assertTrue(coffee.toString().equals("Coffee Order:\n[]"), "Print order");
+		assertTrue(coffee.toString().equals("[100% espresso]"), "Print order");
 	}
 	
+	/**
+	 * Test full order.
+	 */
 	@Test
 	void testFullOrder() {
-		coffee = testManager.construct(10, 10, 10, 10, true, "hazelnut");
+		coffee = testManager.construct(10, true, 10, 10, true, "hazelnut");
 		System.out.println(coffee);
+		assertEquals( 70, coffee.getEspresso(),"60% Espresso");
 		assertEquals( 10, coffee.getMilk(),"10% Milk");
-		assertEquals( 10, coffee.getCream(),"10% Cream");
+		assertTrue(coffee.getCream(),"Cream");
 		assertEquals( 10, coffee.getWater(),"10% Water");
 		assertEquals( 10, coffee.getFoam(),"10% Foam");
-		assertTrue(coffee.isSugar(),"Add Sugar");
+		assertTrue(coffee.hasSugar(),"Add Sugar");
 		assertTrue(coffee.getFlavor().equals("hazelnut"), "Hazelnut flavor"); 
-		assertTrue(coffee.toString().equals("Coffee Order:\n[10% milk\n10% cream\n10% water\n10% foam\n"
-				+ "add sugar\nadd a pump of hazelnut syrup]"), "Print order");
+		assertTrue(coffee.toString().equals("[70% espresso\n 10% cream\n 10% water\n 10% foam\n"
+				+ " add sugar\n add hazelnut syrup]"), "Print order");
 	}
 	
+	/**
+	 * Test no espresso.
+	 */
+	@Test
+	void testNoEspresso() {
+		Throwable exception = Assertions.assertThrows(IllegalArgumentException.class, () -> {
+			 coffee = testManager.construct(90, true, 10, 0, true, "");
+			  });
+		 assertEquals("Your drink is 0% espresso. Try again with less milk/cream/water/foam.", exception.getMessage());
+	}
 	
 
 }
